@@ -1,3 +1,4 @@
+//Qui viene definito il modello feature
 module.exports = class Feature{
     constructor(id, geometry) {
         this.type = "Feature";

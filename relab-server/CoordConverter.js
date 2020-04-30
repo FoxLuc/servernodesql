@@ -3,6 +3,8 @@ const parse = require('wellknown');
 const Feature = require('./models/feature.model.js');
 const FeatureCollection = require('./models/featureCollection.model.js');
 
+//Per mostrarle con il nostro programma, qui vengono convertite le coordinate dal wkt quando sono in SQL, al
+//formato GeoJson
 module.exports = class CoordConverter {
     constructor()
     {

@@ -4,6 +4,7 @@ const sql = require('mssql');
 const CC = require('./CoordConverter.js');
 const coordConverter =  new CC();
 
+//Per accedere al server, si userà queste credenziali
 const config = {
     user: 'PCTO', 
     password: 'xxx123#',
@@ -18,8 +19,7 @@ app.get('/', function (req, res) {
     });
 });
 
-
-
+//In questo metodo, si crea la query per la richiesta dei dati, eseguita con sqlRequest.query
 function makeSqlRequest(res) {
     let sqlRequest = new sql.Request();
     let q = 'SELECT DISTINCT TOP (100) [GEOM].STAsText() FROM [Katmai].[dbo].[interventiMilano]';
