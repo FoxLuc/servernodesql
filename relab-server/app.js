@@ -13,6 +13,7 @@ const config = {
     database: 'Katmai', 
 }
 
+//Questi URL quando inseriti risponderanno alle nostre richieste SQL
 app.get('/', function (req, res) {
     sqlUtils.connect(req, res, sqlUtils.makeSqlRequest);
  });

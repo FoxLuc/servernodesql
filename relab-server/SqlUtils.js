@@ -2,7 +2,7 @@ const sql = require('mssql');
 const CC = require('./CoordConverter.js');
 
 const coordConverter =  new CC();
- 
+//In questo progetto si usa la classe SqlUtils che serve a raggruppare tutte le funzioni che servono ad accedere al database
 const config = {
     user: 'PCTO',  
     password: 'xxx123#', 
@@ -11,9 +11,10 @@ const config = {
 }
 
 module.exports = class SqlUtils {
-
+ //i metodi in questa classe sono statici perchè servono all'intera classe
     static connect(req, res, connectedCallback)
     {
+        //la funzione connect serve a connetterci al database con la nostra configurazione e inviare un errore nel caso non fosse possibile
         sql.connect(config, (err) => {
             if (err) console.log(err);  
             else connectedCallback(req, res);      
