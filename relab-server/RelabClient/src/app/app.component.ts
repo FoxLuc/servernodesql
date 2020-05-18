@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
   prepareCiVettData = (data: Ci_vettore[]) =>
   {
     console.log(data);
-    this.markers = []; 
+    this.markers = [];
     for (const iterator of data) {
       let m = new Marker(iterator.WGS84_X,iterator.WGS84_Y,iterator.CI_VETTORE);
       this.markers.push(m);
