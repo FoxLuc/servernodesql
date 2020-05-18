@@ -1,9 +1,13 @@
 const express = require('express');
+
 const app = new express();
+
+const cors = require('cors');
+
 const sql = require('mssql');
-const CC = require('./CoordConverter.js');
 const sqlUtils = require('./SqlUtils.js');
-const coordConverter =  new CC();
+
+app.use(new cors());
 
 //Per accedere al server, si userà queste credenziali
 const config = {
