@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Ci_vettore } from './models/ci_vett.model';
 import { Marker } from './models/marker.model';
+import { MouseEvent } from '@agm/core';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,11 @@ export class AppComponent implements OnInit {
   obsCiVett : Observable<Ci_vettore[]>;
   markers : Marker[]
 
+  circleLat : number = 0; //Latitudine e longitudine iniziale del cerchio
+  circleLng: number = 0;
+  maxRadius: number = 400; //Voglio evitare raggi troppo grossi
+  radius : number = this.maxRadius; //Memorizzo il raggio del cerchio
+
   constructor(public http: HttpClient) {
   }
 
@@ -32,19 +38,37 @@ export class AppComponent implements OnInit {
 
   prepareCiVettData = (data: Ci_vettore[]) =>
   {
+    let latTot = 0; //Uso queste due variabili per calcolare latitudine e longitudine media
+    let lngTot = 0; //E centrare la mappa
+
     console.log(data);
     this.markers = [];
+
     for (const iterator of data) {
       let m = new Marker(iterator.WGS84_X,iterator.WGS84_Y,iterator.CI_VETTORE);
+      latTot += m.lat; //Sommo tutte le latitutidini e longitudini
+      lngTot += m.lng;
       this.markers.push(m);
     }
- }
+    this.lng = lngTot/data.length; //Commenta qui
+    this.lat = latTot/data.length;
+    this.zoom = 16;
+  }
 
   ngOnInit() {
     this.obsGeoData = this.http.get<GeoFeatureCollection>("https://3000-e956aff5-0cbb-4339-8996-487215199172.ws-eu01.gitpod.io");
     this.obsGeoData.subscribe(this.prepareData);
-    this.obsCiVett = this.http.get<Ci_vettore[]>("https://3000-e956aff5-0cbb-4339-8996-487215199172.ws-eu01.gitpod.io/ci_vettore/90");
-    this.obsCiVett.subscribe(this.prepareCiVettData);
+    //Rimuovi la chiamata http a `TUO_URL/ci_vettore/${val}`
+  }
+
+  //Questo metodo richiama la route sul server che recupera il foglio specificato nella casella di testo
+  cambiaFoglio(foglio) : boolean
+  {
+    let val = foglio.value; //Commenta qui
+    this.obsCiVett = this.http.get<Ci_vettore[]>(`https://3000-e956aff5-0cbb-4339-8996-487215199172.ws-eu01.gitpod.io/ci_vettore/${val}`);  //Commenta qui
+    this.obsCiVett.subscribe(this.prepareCiVettData); //Commenta qui
+    console.log(val);
+    return false;
   }
 
   styleFunc = (feature) => {
@@ -54,4 +78,47 @@ export class AppComponent implements OnInit {
       strokeWeight: 1
     });
   }
+
+  mapClicked($event: MouseEvent) {
+    this.circleLat = $event.coords.lat; //Queste sono le coordinate cliccate
+    this.circleLng = $event.coords.lng; //Sposto il centro del cerchio qui
+    this.lat = this.circleLat; //Sposto il centro della mappa qui
+    this.lng = this.circleLng;
+    this.zoom = 15;  //Zoom sul cerchio
+  }
+
+  circleRedim(newRadius : number){
+    console.log(newRadius) //posso leggere sulla console il nuovo raggio
+    this.radius = newRadius;  //Ogni volta che modifico il cerchio, ne salvo il raggio
+  }
+
+  circleDoubleClicked(circleCenter)
+  {
+    console.log(circleCenter); //Voglio ottenere solo i valori entro questo cerchio
+    console.log(this.radius);
+
+    this.circleLat = circleCenter.coords.lat; //Aggiorno le coordinate del cerchio
+    this.circleLng = circleCenter.coords.lng; //Aggiorno le coordinate del cerchio
+
+    //Non conosco ancora le prestazioni del DB, non voglio fare ricerche troppo onerose
+    if(this.radius > this.maxRadius)
+    {
+      console.log("area selezionata troppo vasta sarà reimpostata a maxRadius");
+       this.radius = this.maxRadius;
+    }
+    console.log ("raggio in gradi " + (this.radius * 0.00001)/1.1132)
+
+    //Voglio spedire al server una richiesta che mi ritorni tutte le abitazioni all'interno del cerchio
+
+    let raggioInGradi = (this.radius * 0.00001)/1.1132;
+//Posso riusare lo stesso observable e lo stesso metodo di gestione del metodo
+//cambiaFoglio poichè riceverò lo stesso tipo di dati
+//Divido l'url andando a capo per questioni di leggibilità non perchè sia necessario
+    this.obsCiVett = this.http.get<Ci_vettore[]>(`https://3000-e956aff5-0cbb-4339-8996-487215199172.ws-eu01.gitpod.io/ci_geovettore/
+    ${this.circleLat}/
+    ${this.circleLng}/
+    ${raggioInGradi}`);
+    this.obsCiVett.subscribe(this.prepareCiVettData);
+  }
+
 }
