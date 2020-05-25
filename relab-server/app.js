@@ -27,6 +27,12 @@ app.get('/ci_vettore/:foglio', function (req, res) {
    sqlUtils.connect(req, res, sqlUtils.ciVettRequest);
 });
 
+app.get('/ci_geovettore/:lng/:lat/:r', function (req, res) {
+    console.log(req.params);
+    //richiamo il metodo che ottiene l'elenco dei vettori energetici
+    sqlUtils.connect(req, res, sqlUtils.ciVettGeoRequest);
+});
+
 //In questo metodo, si crea la query per la richiesta dei dati, eseguita con sqlRequest.query
 function makeSqlRequest(req, res) {
     let sqlRequest = new sql.Request();
