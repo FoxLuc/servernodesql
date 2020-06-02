@@ -133,6 +133,7 @@ export class AppComponent implements OnInit {
     this.obsCiVett.subscribe(this.prepareCiVettData);
   }
 
+  //Questa è la "legenda" ovvero la zona catastale è colorata a seconda della propria media
    //Mappa rosso-verde
 avgColorMap = (media) =>
   {

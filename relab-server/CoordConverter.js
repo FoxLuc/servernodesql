@@ -10,8 +10,8 @@ module.exports = class CoordConverter {
         proj4.defs("EPSG:32632", "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs");
     }
     generateGeoJson(recordset) {
-        //In questa fase, abbiamo modificato il server per prendere i dati da un altra tabella che contiene i dati già convertiti in WKT, quindi
-        //non serve più convertire i dati
+        //In questa fase, abbiamo modificato il server per prendere i dati da un altra tabella che ha già i dati convertiti in WKT
+        //quindi non serve più convertire i dati nel programma
         let geoJsonHeader = new FeatureCollection();
         let i = 0;
         for (const record of recordset) {  

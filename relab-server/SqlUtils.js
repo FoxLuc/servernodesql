@@ -49,6 +49,7 @@ module.exports = class SqlUtils {
     }
 
     static ciVettGeoRequest(req,res) {
+        //Inoltre abbiamo usato una nuova query per definire anche la media
         let sqlRequest = new sql.Request();  //sqlRequest: oggetto che serve a eseguire le query
         let x = Number(req.params.lng);
         let y = Number(req.params.lat);
