@@ -83,7 +83,6 @@ module.exports = class SqlUtils {
         GROUP BY [WKT], SEZ`
 
         //console.log(q);
-        //eseguo la query e aspetto il risultato nella callback
         sqlRequest.query(q, (err, result) => { SqlUtils.sendQueryResults(err, result, res) });
     }
 }

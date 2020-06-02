@@ -3,23 +3,23 @@ const parse = require('wellknown');
 const Feature = require('./models/feature.model.js');
 const FeatureCollection = require('./models/featureCollection.model.js');
 
-//Per mostrarle con il nostro programma, qui vengono convertite le coordinate dal wkt quando sono in SQL, al
-//formato GeoJson
+
 module.exports = class CoordConverter {
     constructor()
     {
         proj4.defs("EPSG:32632", "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs");
     }
     generateGeoJson(recordset) {
+        //In questa fase, abbiamo modificato il server per prendere i dati da un altra tabella che contiene i dati già convertiti in WKT, quindi
+        //non serve più convertire i dati
         let geoJsonHeader = new FeatureCollection();
         let i = 0;
         for (const record of recordset) {  
             let media = record["media"];
             let somma = record["somma"];
             let polygonGeometry = parse(record["WKT"]);
-            //let geom = this._convertPolygon(polygonGeometry); // converto in "WGS 84" 
-            let geom = (polygonGeometry); // non converto più in "WGS 84" 
-            // e metto la geometry  geojson
+            //let geom = this._convertPolygon(polygonGeometry);
+            let geom = (polygonGeometry);
             geoJsonHeader.features.push(new Feature(i,geom, media, somma));
         }
         return geoJsonHeader;
